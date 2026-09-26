@@ -48,6 +48,6 @@ Unallocated, reserved, private, documentation and link-local space, plus the 6to
 
 `ParsePrefix` refuses host bits — `net.ParseCIDR` silently masks `10.0.0.1/8` down to `10.0.0.0/8`, which reads as acceptance of something probably mistyped. `Masked` is how you ask for the correction instead. `Decimal`/`AddrFromDecimal` convert to and from integer form, and `IsASN`/`ASN` handle `AS15169`.
 
-## Licence
+## License
 
 MIT.
