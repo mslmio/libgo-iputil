@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-// The bogon check sits on ip_api's request path, so its cost is per lookup.
+// The bogon check sits on an API's request path, so its cost is per lookup.
 func BenchmarkIsBogon(b *testing.B) {
 	cases := []netip.Addr{
 		netip.MustParseAddr("8.8.8.8"),
