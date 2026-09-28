@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff.
 
+## 1.1.1 - 2026-09-28
+
+### Fixes
+
+- Take the bogon list from github.com/mslmio/bogon-ip v1.0.0 ([`f96bbab`](https://github.com/mslmio/libgo-iputil/commit/f96bbaba35a4d8232280317c29c3a7b679fdec23))
+
 ## 1.1.0 - 2026-09-28
 
 ### Features
