@@ -77,3 +77,28 @@ func TestBogonNonAddr(t *testing.T) {
 		}
 	}
 }
+
+// The special-purpose blocks that are not globally reachable, unallocated IPv6,
+// and the 6to4 and Teredo forms of every IPv4 block, each pinned at an edge,
+// with the addresses just outside them that must stay public.
+func TestBogonReservedAndUnallocated(t *testing.T) {
+	for _, s := range []string{
+		"192.88.99.2", "64:ff9b::808:808", "64:ff9b:1::1", "100:0:0:1::1", "2001:2::1",
+		"3fff::1", "3fff:fff:ffff:ffff:ffff:ffff:ffff:ffff", "5f00::1",
+		"2001:1::1", "2001:3::1", "2001:20::1", "2001:1ff:ffff:ffff:ffff:ffff:ffff:ffff",
+		"1000::1", "1fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "4000::1", "e000::1",
+		"2002:6440::1", "2001:0:6440::1", "2002:c058:6302::1", "2001:0:c058:6302::1",
+	} {
+		if !IsBogonStr(s) {
+			t.Errorf("%s should be bogon", s)
+		}
+	}
+	for _, s := range []string{
+		"192.88.99.1", "192.88.99.3", "3fff:1000::", "2001:200::", "2000::1",
+		"2001:0:808:808::1", "2002:808:808::1", "2002:6480::1", "2001:0:6480::1",
+	} {
+		if IsBogonStr(s) {
+			t.Errorf("%s wrongly reported as bogon", s)
+		}
+	}
+}

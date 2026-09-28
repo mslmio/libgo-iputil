@@ -7,7 +7,10 @@ import (
 
 // The address space that must never appear as a public peer: unallocated,
 // reserved, private, documentation and link-local blocks, plus the 6to4 and
-// Teredo encodings that tunnel the IPv4 ones into IPv6.
+// Teredo encodings that tunnel the IPv4 ones into IPv6. The reserved blocks are
+// the IANA special-purpose entries that are not globally reachable, with the
+// NAT64 prefix 64:ff9b::/96, deprecated site-local and IPv4-compatible space,
+// and multicast.
 //
 // These are the same lists the JavaScript and SDK bogon checks carry
 // (mslm/libjs/ip/isBogon.ts), and the three must agree - a client that
@@ -22,6 +25,7 @@ var bogonCIDRs = []string{
 	"172.16.0.0/12",
 	"192.0.0.0/24",
 	"192.0.2.0/24",
+	"192.88.99.2/32",
 	"192.168.0.0/16",
 	"198.18.0.0/15",
 	"198.51.100.0/24",
@@ -34,9 +38,15 @@ var bogonCIDRs = []string{
 	"::1/128",
 	"::ffff:0:0/96",
 	"::/96",
+	"64:ff9b::/96",
+	"64:ff9b:1::/48",
 	"100::/64",
+	"100:0:0:1::/64",
+	"2001:2::/48",
 	"2001:10::/28",
 	"2001:db8::/32",
+	"3fff::/20",
+	"5f00::/16",
 	"fc00::/7",
 	"fe80::/10",
 	"fec0::/10",
@@ -45,11 +55,13 @@ var bogonCIDRs = []string{
 	// 6to4 wrappers around the IPv4 blocks above.
 	"2002::/24",
 	"2002:a00::/24",
+	"2002:6440::/26",
 	"2002:7f00::/24",
 	"2002:a9fe::/32",
 	"2002:ac10::/28",
 	"2002:c000::/40",
 	"2002:c000:200::/40",
+	"2002:c058:6302::/48",
 	"2002:c0a8::/32",
 	"2002:c612::/31",
 	"2002:c633:6400::/40",
@@ -61,11 +73,13 @@ var bogonCIDRs = []string{
 	// Teredo wrappers around the same.
 	"2001::/40",
 	"2001:0:a00::/40",
+	"2001:0:6440::/42",
 	"2001:0:7f00::/40",
 	"2001:0:a9fe::/48",
 	"2001:0:ac10::/44",
 	"2001:0:c000::/56",
 	"2001:0:c000:200::/56",
+	"2001:0:c058:6302::/64",
 	"2001:0:c0a8::/48",
 	"2001:0:c612::/47",
 	"2001:0:c633:6400::/56",
@@ -73,6 +87,27 @@ var bogonCIDRs = []string{
 	"2001:0:e000::/36",
 	"2001:0:f000::/36",
 	"2001:0:ffff:ffff::/64",
+
+	// The rest of the IETF protocol assignments block, 2001::/23. Teredo's
+	// 2001::/32 is left out: a Teredo address is judged by the IPv4 server it
+	// carries, above.
+	"2001:1::/32",
+	"2001:2::/31",
+	"2001:4::/30",
+	"2001:8::/29",
+	"2001:20::/27",
+	"2001:40::/26",
+	"2001:80::/25",
+	"2001:100::/24",
+
+	// Everything outside global unicast, 2000::/3, none of which is allocated.
+	"::/3",
+	"4000::/3",
+	"6000::/3",
+	"8000::/3",
+	"a000::/3",
+	"c000::/3",
+	"e000::/3",
 }
 
 // Sorted, merged and disjoint, so membership is a binary search.
