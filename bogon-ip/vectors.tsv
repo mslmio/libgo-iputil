@@ -1,0 +1,115 @@
+address	bogon	why
+0.0.0.0	true	This network
+10.0.0.1	true	Private use
+10.255.255.255	true	Last address in 10.0.0.0/8
+100.64.0.1	true	Carrier-grade NAT
+100.127.255.255	true	Last address in 100.64.0.0/10
+127.0.0.1	true	Loopback
+169.254.1.1	true	Link local
+169.254.169.254	true	Link local, where clouds serve instance metadata
+172.16.5.4	true	Private use
+172.31.255.255	true	Last address in 172.16.0.0/12
+192.0.0.1	true	IETF protocol assignments
+192.0.2.1	true	TEST-NET-1
+192.0.2.255	true	Last address in 192.0.2.0/24
+192.88.99.2	true	6a44 relay anycast, a single address
+192.168.1.1	true	Private use
+198.18.0.1	true	Benchmarking
+198.19.255.255	true	Last address in 198.18.0.0/15
+198.51.100.7	true	TEST-NET-2
+203.0.113.9	true	TEST-NET-3
+224.0.0.1	true	Multicast
+239.255.255.255	true	Multicast
+240.0.0.1	true	Reserved for future use
+255.255.255.255	true	Limited broadcast
+1.1.1.1	false	Public
+8.8.8.8	false	Public
+45.83.91.1	false	Public
+9.255.255.255	false	Just before 10.0.0.0/8
+11.0.0.0	false	Just after 10.0.0.0/8
+32.2.0.1	false	Public, though its bits fall in 2002::/24 if read as the top of an IPv6 address
+100.63.255.255	false	Just before 100.64.0.0/10
+100.128.0.0	false	Just after 100.64.0.0/10
+172.15.255.255	false	Just before 172.16.0.0/12
+172.32.0.0	false	Just after 172.16.0.0/12
+192.0.3.0	false	Just after 192.0.2.0/24
+192.88.99.1	false	Beside 192.88.99.2/32
+192.88.99.3	false	Beside 192.88.99.2/32
+192.167.255.255	false	Just before 192.168.0.0/16
+192.169.0.0	false	Just after 192.168.0.0/16
+198.20.0.0	false	Just after 198.18.0.0/15
+223.255.255.255	false	Just before 224.0.0.0/4
+::ffff:8.8.8.8	false	IPv4-mapped 8.8.8.8, judged as 8.8.8.8
+::ffff:808:808	false	The same, its IPv4 half in hex
+0:0:0:0:0:ffff:808:808	false	The same, written in full
+::FFFF:8.8.8.8	false	The same, in upper case
+::ffff:10.0.0.1	true	IPv4-mapped 10.0.0.1, judged as 10.0.0.1
+::ffff:127.0.0.1	true	IPv4-mapped loopback
+::ffff:169.254.169.254	true	IPv4-mapped link local
+::FFFF:7F00:1	true	IPv4-mapped 127.0.0.1, in hex and upper case
+::8.8.8.8	true	IPv4-compatible, not mapped: stays IPv6, inside ::/96
+::127.0.0.1	true	IPv4-compatible, inside ::/96
+::ffff:ffff	true	IPv4-compatible ::255.255.255.255, inside ::/96
+::5	true	Inside ::/96
+::	true	Unspecified
+::1	true	Loopback
+0:0:0:0:0:0:0:1	true	Loopback, written in full
+64:ff9b::808:808	true	NAT64 well-known prefix, whatever IPv4 address it carries
+64:ff9b:1::1	true	Local-use NAT64
+100::1	true	Remotely triggered black hole
+100::ffff:ffff:ffff:ffff	true	Last address in 100::/64
+100:0:0:1::	true	Dummy prefix, right after 100::/64
+100:0:0:2::	true	Unallocated, below 2000::/3
+1000::1	true	Unallocated, below 2000::/3
+1fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff	true	Last address below 2000::/3
+2000::1	false	Global unicast
+2001:2::1	true	Benchmarking
+2001:10::1	true	ORCHID
+2001:1::1	true	IETF protocol assignments, outside Teredo
+2001:3::1	true	IETF protocol assignments
+2001:20::1	true	IETF protocol assignments
+2001:1ff:ffff:ffff:ffff:ffff:ffff:ffff	true	Last address in 2001::/23
+2001:200::	false	Just after 2001::/23
+2001:db8::1	true	Documentation
+2001:DB8::1	true	Documentation, in upper case
+2001:db8:ffff:ffff:ffff:ffff:ffff:ffff	true	Last address in 2001:db8::/32
+2001:db7:ffff:ffff:ffff:ffff:ffff:ffff	false	Just before 2001:db8::/32
+2001:db9::	false	Just after 2001:db8::/32
+3fff::1	true	Documentation
+3fff:fff:ffff:ffff:ffff:ffff:ffff:ffff	true	Last address in 3fff::/20
+3fff:1000::	false	Just after 3fff::/20
+3fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff	false	Last global unicast address
+4000::1	true	Unallocated, above 2000::/3
+5f00::1	true	SRv6 SIDs
+e000::1	true	Unallocated
+fc00::1	true	Unique local
+fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff	true	Last address in fc00::/7
+fe00::	true	Unallocated, between fc00::/7 and fe80::/10
+fe80::1	true	Link local
+FE80::1	true	Link local, in upper case
+fe80:0:0:0:0:0:0:1	true	Link local, written in full
+fec0::1	true	Site local
+ff02::1	true	Multicast
+ff0e::1	true	Global-scope multicast
+2606:4700:4700::1111	false	Public
+2606:4700:4700:0:0:0:0:1111	false	Public, written in full
+2001:4860:4860::8888	false	Public
+2400:cb00::1	false	Public
+2A00:1450::1	false	Public, in upper case
+2002::1	true	6to4 form of 0.0.0.0/8
+2002:a00::1	true	6to4 form of 10.0.0.0/8
+2002:6440::1	true	6to4 form of 100.64.0.0/10
+2002:7f00::1	true	6to4 form of 127.0.0.0/8
+2002:a9fe:ffff:ffff:ffff:ffff:ffff:ffff	true	Last address in 2002:a9fe::/32
+2002:c058:6302::1	true	6to4 form of 192.88.99.2/32
+2002:a9ff::	false	6to4 form of 169.255.0.0, which is public
+2002:808:808::1	false	6to4 form of 8.8.8.8
+2002:6480::1	false	6to4 form of 100.128.0.0, just after 100.64.0.0/10
+2001::1	true	Teredo form of 0.0.0.0/8
+2001:0:a00::1	true	Teredo form of 10.0.0.0/8
+2001:0:6440::1	true	Teredo form of 100.64.0.0/10
+2001:0:c000:2ff:ffff:ffff:ffff:ffff	true	Last address in 2001:0:c000:200::/56
+2001:0:c058:6302::1	true	Teredo form of 192.88.99.2/32
+2001:0:c000:300::	false	Teredo through 192.0.3.0, which is public
+2001:0:808:808::1	false	Teredo through 8.8.8.8
+2001:0:6480::1	false	Teredo through 100.128.0.0, just after 100.64.0.0/10

@@ -44,6 +44,8 @@ iputil.Bogons()           // the merged table
 
 Unallocated, reserved, private, documentation and link-local space, plus the 6to4 and Teredo encodings that tunnel the IPv4 blocks into IPv6. An IPv4-mapped address is judged as the IPv4 address it carries.
 
+The blocks are [bogon-ip](https://github.com/mslmio/bogon-ip)'s, vendored in `bogon-ip/` at the release its `VERSION` names, and its test vectors run with this package's tests. `scripts/sync-bogon-ip.sh v<version>` takes another release.
+
 ## Also
 
 `ParsePrefix` refuses host bits — `net.ParseCIDR` silently masks `10.0.0.1/8` down to `10.0.0.0/8`, which reads as acceptance of something probably mistyped. `Masked` is how you ask for the correction instead. `Decimal`/`AddrFromDecimal` convert to and from integer form, and `IsASN`/`ASN` handle `AS15169`.

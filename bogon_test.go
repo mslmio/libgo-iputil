@@ -2,6 +2,8 @@ package iputil
 
 import (
 	"net/netip"
+	"os"
+	"strings"
 	"testing"
 )
 
@@ -45,31 +47,6 @@ func TestBogonOverlapMerged(t *testing.T) {
 	}
 }
 
-func TestBogonPublic(t *testing.T) {
-	public := []string{
-		"1.1.1.1", "8.8.8.8", "45.83.91.1", "9.255.255.255", "11.0.0.0",
-		"100.63.255.255", "100.128.0.0", "172.15.255.255", "172.32.0.0",
-		"192.167.255.255", "192.169.0.0", "223.255.255.255",
-		"2606:4700:4700::1111", "2001:4860:4860::8888",
-		"2001:db7:ffff:ffff:ffff:ffff:ffff:ffff", "2001:db9::",
-	}
-	for _, s := range public {
-		if IsBogonStr(s) {
-			t.Errorf("%s wrongly reported as bogon", s)
-		}
-	}
-}
-
-// An IPv4-mapped address carries an IPv4 address and must be judged as one.
-func TestBogonMapped(t *testing.T) {
-	if !IsBogonStr("::ffff:10.0.0.1") {
-		t.Error("::ffff:10.0.0.1 should be bogon: it is 10.0.0.1")
-	}
-	if IsBogonStr("::ffff:8.8.8.8") {
-		t.Error("::ffff:8.8.8.8 should not be bogon: it is 8.8.8.8")
-	}
-}
-
 func TestBogonNonAddr(t *testing.T) {
 	for _, s := range []string{"", "nonsense", "10.0.0.0/8", "fe80::1%eth0"} {
 		if IsBogonStr(s) {
@@ -78,27 +55,29 @@ func TestBogonNonAddr(t *testing.T) {
 	}
 }
 
-// The special-purpose blocks that are not globally reachable, unallocated IPv6,
-// and the 6to4 and Teredo forms of every IPv4 block, each pinned at an edge,
-// with the addresses just outside them that must stay public.
-func TestBogonReservedAndUnallocated(t *testing.T) {
-	for _, s := range []string{
-		"192.88.99.2", "64:ff9b::808:808", "64:ff9b:1::1", "100:0:0:1::1", "2001:2::1",
-		"3fff::1", "3fff:fff:ffff:ffff:ffff:ffff:ffff:ffff", "5f00::1",
-		"2001:1::1", "2001:3::1", "2001:20::1", "2001:1ff:ffff:ffff:ffff:ffff:ffff:ffff",
-		"1000::1", "1fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff", "4000::1", "e000::1",
-		"2002:6440::1", "2001:0:6440::1", "2002:c058:6302::1", "2001:0:c058:6302::1",
-	} {
-		if !IsBogonStr(s) {
-			t.Errorf("%s should be bogon", s)
-		}
+// The answers github.com/mslmio/bogon-ip says every checker built on its list
+// must give, IPv4-mapped addresses among them. Each goes through IsBogon too,
+// since ParseAddr unmaps before IsBogonStr ever sees an address.
+func TestBogonVectors(t *testing.T) {
+	data, err := os.ReadFile("bogon-ip/vectors.tsv")
+	if err != nil {
+		t.Fatal(err)
 	}
-	for _, s := range []string{
-		"192.88.99.1", "192.88.99.3", "3fff:1000::", "2001:200::", "2000::1",
-		"2001:0:808:808::1", "2002:808:808::1", "2002:6480::1", "2001:0:6480::1",
-	} {
-		if IsBogonStr(s) {
-			t.Errorf("%s wrongly reported as bogon", s)
+	lines := strings.Split(strings.TrimSuffix(string(data), "\n"), "\n")
+	if len(lines) < 2 {
+		t.Fatal("bogon-ip/vectors.tsv holds no vectors")
+	}
+	for _, line := range lines[1:] {
+		f := strings.Split(line, "\t")
+		if len(f) != 3 {
+			t.Fatalf("bogon-ip/vectors.tsv: %q is not address, bogon, why", line)
+		}
+		want := f[1] == "true"
+		if got := IsBogonStr(f[0]); got != want {
+			t.Errorf("%s: IsBogonStr is %v, want %v (%s)", f[0], got, want, f[2])
+		}
+		if got := IsBogon(netip.MustParseAddr(f[0])); got != want {
+			t.Errorf("%s: IsBogon is %v, want %v (%s)", f[0], got, want, f[2])
 		}
 	}
 }

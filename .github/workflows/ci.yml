@@ -33,6 +33,10 @@ jobs:
           fi
       - run: go vet ./...
       - run: go test -race ./...
+      # The vendored bogon list is byte for byte the bogon-ip release it names.
+      - name: bogon-ip
+        if: matrix.go == 'stable'
+        run: scripts/sync-bogon-ip.sh --check
       # GOTOOLCHAIN=auto for the install alone: setup-go exports local, and
       # govulncheck may need a newer Go to build than the one it scans with.
       - name: govulncheck
