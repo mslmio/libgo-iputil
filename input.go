@@ -147,8 +147,10 @@ func CollectAddrs(args []string, opts Opts, limit int) ([]netip.Addr, error) {
 
 // scanStdin reads standard input when there is something there to read.
 func scanStdin(opts Opts, noArgs bool, fn func(Input) error) error {
+	// A service or a container run without stdin gets /dev/null, a character
+	// device as a terminal is: there is nothing to read, and nobody to prompt.
 	st, err := os.Stdin.Stat()
-	if err != nil {
+	if err != nil || isDevNull(st) {
 		return nil
 	}
 	terminal := st.Mode()&os.ModeCharDevice != 0
