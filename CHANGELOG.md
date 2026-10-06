@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff.
 
+## 1.1.2 - 2026-10-06
+
+### Fixes
+
+- Skip a /dev/null stdin rather than prompt on it ([`96e472a`](https://github.com/mslmio/libgo-iputil/commit/96e472ad1e47d74ef4be49e5ac7ac2a823c7775d))
+
 ## 1.1.1 - 2026-09-28
 
 ### Fixes
