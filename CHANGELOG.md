@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff.
 
+## 1.1.3 - 2026-10-19
+
+### Fixes
+
+- Skip a byte order mark rather than lose the address after it ([`259c765`](https://github.com/mslmio/libgo-iputil/commit/259c765adb9effa480bfea71ac59f6833fd5621a))
+
 ## 1.1.2 - 2026-10-06
 
 ### Fixes
