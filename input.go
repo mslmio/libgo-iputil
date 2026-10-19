@@ -187,7 +187,9 @@ func scanLines(r io.Reader, stopOnBlank bool, fn func(Input) error) error {
 	// corruption rather than formatting.
 	sc.Buffer(make([]byte, 0, 64*1024), 8*1024*1024)
 	for sc.Scan() {
-		line := strings.TrimSpace(sc.Text())
+		// TrimSpace keeps a byte order mark, which Excel and Windows PowerShell
+		// write first in a UTF-8 file, so it would hide the first address.
+		line := strings.TrimSpace(strings.TrimPrefix(sc.Text(), "\ufeff"))
 		if line == "" {
 			if stopOnBlank {
 				return nil

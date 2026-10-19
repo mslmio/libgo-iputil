@@ -98,6 +98,27 @@ func TestWalkAddrsFile(t *testing.T) {
 	assertAddrs(t, got, []string{"1.1.1.1", "2.2.2.2", "10.0.0.0", "10.0.0.1", "3.3.3.3"})
 }
 
+// Excel's CSV UTF-8 and Windows PowerShell start a file with a byte order mark,
+// and concatenating two such files puts the second one's at a line start.
+func TestWalkAddrsFileByteOrderMark(t *testing.T) {
+	dir := t.TempDir()
+	list := filepath.Join(dir, "ips.csv")
+	body := "\xef\xbb\xbf1.1.1.1\r\n2.2.2.2\r\n\xef\xbb\xbf3.3.3.3\r\n"
+	if err := os.WriteFile(list, []byte(body), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	var got []string
+	err := WalkAddrs([]string{list}, Opts{Files: true}, func(a netip.Addr) error {
+		got = append(got, a.String())
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertAddrs(t, got, []string{"1.1.1.1", "2.2.2.2", "3.3.3.3"})
+}
+
 // Without Files set, a filename is just an unrecognized token.
 func TestFilesOptRespected(t *testing.T) {
 	dir := t.TempDir()
