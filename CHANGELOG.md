@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff.
 
+## 1.1.4 - 2026-11-02
+
+### Fixes
+
+- Take bogon-ip v1.0.1, whose vectors reach every block ([`ace623b`](https://github.com/mslmio/libgo-iputil/commit/ace623b029ae914298a956dd858ff6c6e0bd7dae))
+
 ## 1.1.3 - 2026-10-19
 
 ### Fixes
