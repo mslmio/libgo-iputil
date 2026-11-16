@@ -10,6 +10,10 @@ import (
 //
 // Both endpoints are held rather than a prefix, because the ranges users type
 // and the ranges registries publish are mostly not on a prefix boundary.
+//
+// A Range NewRange would never return holds no address: the zero Range, which
+// Input carries for every Kind but KindRange, and one built by hand with an
+// invalid end, ends of two families, or Start after End.
 type Range struct {
 	Start netip.Addr
 	End   netip.Addr
@@ -58,7 +62,8 @@ func RangeOf(p netip.Prefix) Range {
 
 // Contains reports whether addr falls inside the range.
 func (r Range) Contains(addr netip.Addr) bool {
-	if addr.Is4() != r.Start.Is4() {
+	// valid() less its order check, which the comparisons below imply.
+	if !r.Start.IsValid() || r.End.Is4() != r.Start.Is4() || addr.Is4() != r.Start.Is4() {
 		return false
 	}
 	return r.Start.Compare(addr) <= 0 && r.End.Compare(addr) >= 0
@@ -66,7 +71,7 @@ func (r Range) Contains(addr netip.Addr) bool {
 
 // Overlaps reports whether two ranges share any address.
 func (r Range) Overlaps(o Range) bool {
-	if r.Start.Is4() != o.Start.Is4() {
+	if !r.valid() || !o.valid() || r.Start.Is4() != o.Start.Is4() {
 		return false
 	}
 	return r.Start.Compare(o.End) <= 0 && o.Start.Compare(r.End) <= 0
@@ -78,6 +83,9 @@ func (r Range) Overlaps(o Range) bool {
 // already 2^64, and returning a saturated or wrapped count would be worse than
 // the allocation.
 func (r Range) Count() *big.Int {
+	if !r.valid() {
+		return new(big.Int)
+	}
 	lo := new(big.Int).SetBytes(r.Start.AsSlice())
 	hi := new(big.Int).SetBytes(r.End.AsSlice())
 	return hi.Sub(hi, lo).Add(hi, big.NewInt(1))
@@ -94,6 +102,9 @@ func (r Range) String() string {
 // Nothing is materialized, so this is safe on a span no slice could hold - the
 // caller decides when to stop.
 func (r Range) All(fn func(netip.Addr) error) error {
+	if !r.valid() {
+		return nil
+	}
 	for addr := r.Start; ; addr = addr.Next() {
 		if err := fn(addr); err != nil {
 			return err
@@ -113,6 +124,9 @@ func (r Range) All(fn func(netip.Addr) error) error {
 // starts at the current address and does not overrun the end. That is optimal
 // here, and it is the same walk netipx.IPSet performs.
 func (r Range) Prefixes() []netip.Prefix {
+	if !r.valid() {
+		return nil
+	}
 	var out []netip.Prefix
 	bits := r.Start.BitLen()
 	addr := r.Start
@@ -133,6 +147,13 @@ func (r Range) Prefixes() []netip.Prefix {
 		}
 		addr = last.Next()
 	}
+}
+
+// valid reports whether the range holds any address. Without it the zero
+// Range reads as one invalid address, and Prefixes indexes past its empty slice.
+func (r Range) valid() bool {
+	return r.Start.IsValid() && r.End.IsValid() && r.Start.Is4() == r.End.Is4() &&
+		r.Start.Compare(r.End) <= 0
 }
 
 // lastOf is the highest address in a prefix.

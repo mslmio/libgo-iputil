@@ -173,3 +173,38 @@ func TestRangeContainsAndOverlaps(t *testing.T) {
 		t.Error("ranges of different families cannot overlap")
 	}
 }
+
+func TestRangeHoldingNoAddress(t *testing.T) {
+	v4, v6 := netip.MustParseAddr("10.0.0.1"), netip.MustParseAddr("::1")
+	cases := map[string]Range{
+		"zero":            {},
+		"from an address": Classify("10.0.0.1").Range,
+		"no end":          {Start: v4},
+		"no start":        {End: v4},
+		"two families":    {Start: v4, End: v6},
+		"start after end": {Start: netip.MustParseAddr("10.0.0.9"), End: v4},
+	}
+	whole, _ := ParseRange("0.0.0.0-255.255.255.255")
+	for name, r := range cases {
+		t.Run(name, func(t *testing.T) {
+			if got := r.Prefixes(); got != nil {
+				t.Errorf("Prefixes() = %v, want none", got)
+			}
+			if got := r.Count(); got.Sign() != 0 {
+				t.Errorf("Count() = %v, want 0", got)
+			}
+			n := 0
+			if err := r.All(func(netip.Addr) error { n++; return nil }); err != nil || n != 0 {
+				t.Errorf("All visited %d addresses (err %v), want none", n, err)
+			}
+			for _, a := range []netip.Addr{{}, v4, v6} {
+				if r.Contains(a) {
+					t.Errorf("Contains(%v) = true", a)
+				}
+			}
+			if r.Overlaps(r) || r.Overlaps(whole) || whole.Overlaps(r) {
+				t.Error("a range holding no address overlaps another")
+			}
+		})
+	}
+}
