@@ -2,6 +2,12 @@
 
 What each release changed for you, newest first. Each line is a commit's summary, linked to its full description and diff.
 
+## 1.1.5 - 2026-11-16
+
+### Fixes
+
+- Hold no address in the zero Range, so Prefixes no longer panics ([`b569745`](https://github.com/mslmio/libgo-iputil/commit/b5697454fa55c646fdc9f838b4d84090cc049cd0))
+
 ## 1.1.4 - 2026-11-02
 
 ### Fixes
